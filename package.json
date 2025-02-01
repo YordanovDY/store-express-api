@@ -1,0 +1,20 @@
+{
+  "name": "store-express-api",
+  "version": "1.0.0",
+  "description": "REST API for an online store using Express.js",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  },
+  "keywords": [],
+  "author": "YordanovDY",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
