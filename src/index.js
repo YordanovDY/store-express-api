@@ -1,7 +1,10 @@
 import express from 'express';
 import routes from './routes.js';
+import allowCORSRequests from './middlewares/corsMiddleware.js';
 
 const app = express();
+
+app.use(allowCORSRequests());
 
 app.use(routes);
 
