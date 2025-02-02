@@ -1,12 +1,12 @@
 import express from 'express';
 import routes from './routes.js';
-import allowCORSRequests from './middlewares/cors-middleware.js';
+import databaseInit from './config/database-config.js';
 import expressInit from './config/express-config.js';
 import { PORT } from './config/constants.js';
 
 const app = express();
 
-app.use(express.json());
+await databaseInit();
 
 expressInit(app);
 
