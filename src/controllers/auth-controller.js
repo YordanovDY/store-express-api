@@ -1,9 +1,6 @@
 import { Router } from "express";
-import jwt from 'jsonwebtoken';
 import authService from "../services/auth-service.js";
 import 'dotenv/config';
-
-const { JWT_SECRET } = process.env;
 
 const authController = Router();
 
@@ -66,7 +63,7 @@ authController.post('/login', async (req, res) => {
     }
 });
 
-authController.get('/user', (req, res) => {
+authController.get('/user', async (req, res) => {
     const authToken = req.cookies['Auth'];
 
     if (!authToken) {
@@ -74,11 +71,36 @@ authController.get('/user', (req, res) => {
     }
 
     try {
-        const tokenData = jwt.verify(authToken, JWT_SECRET);
+        const tokenData = authService.verifyAuthToken(authToken);
         res.status(200).json({ message: 'Valid authentication token', status: 200, result: { user: tokenData } });
 
     } catch (err) {
+        await authService.clearSessionData(req, res);
         res.status(401).json({ message: err.message, status: 401 });
+    }
+});
+
+authController.get('/logout', async (req, res) => {
+    const authToken = req.cookies['Auth'];
+
+    if (!authToken) {
+        return res.status(401).json({ message: 'Missing authentication token', status: 401 });
+    }
+
+    try {
+        authService.verifyAuthToken(authToken);
+
+    } catch (err) {
+        await authService.clearSessionData(req, res);
+        return res.status(401).json({ message: err.message, status: 401 });
+    }
+
+    try {
+        await authService.clearSessionData(req, res);
+        res.status(200).json({ message: 'User logged out', status: 200 });
+
+    } catch (err) {
+        res.status(500).json({ message: err.message, status: 500 });
     }
 });
 

@@ -9,6 +9,8 @@ const { JWT_SECRET } = process.env;
 const authService = {
     register,
     login,
+    clearSessionData,
+    verifyAuthToken,
 };
 
 async function register(email, password) {
@@ -46,6 +48,27 @@ async function login(email, password) {
         ...payload,
         token
     };
+}
+
+function verifyAuthToken(authToken) {
+    return jwt.verify(authToken, JWT_SECRET);
+}
+
+function clearSessionData(req, res) {
+    return new Promise((resolve, reject) => {
+        
+        req.session.destroy((err) => {
+
+            if (err) {
+                return reject(new Error('Logout failed'));
+            }
+
+            res.clearCookie('Auth');
+            res.clearCookie('connect.sid');
+
+            resolve();
+        });
+    });
 }
 
 async function findUser(email) {
