@@ -1,8 +1,22 @@
 import express from 'express';
+import expressSession from 'express-session';
+import cookieParser from 'cookie-parser';
 import allowCORSRequests from '../middlewares/cors-middleware.js';
+import 'dotenv/config';
+
+const { SESSION_SECRET } = process.env;
 
 export default function expressInit(app) {
     app.use(express.json());
+
+    app.use(cookieParser());
+
+    app.use(expressSession({
+        secret: SESSION_SECRET,
+        resave: false,
+        saveUninitialized: true,
+        cookie: { secure: false }
+    }));
 
     app.use(allowCORSRequests({
         'Access-Control-Allow-Origin': '*',

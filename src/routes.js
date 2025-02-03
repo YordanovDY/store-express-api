@@ -3,6 +3,6 @@ import authController from "./controllers/auth-controller.js";
 
 const routes = Router();
 
-routes.use(authController);
+routes.use('/auth', authController);
 
 export default routes;
