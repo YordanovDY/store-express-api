@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import { Schema, Types, model } from "mongoose";
 import bcrypt from 'bcrypt';
 import { SALT_ROUNDS } from "../config/constants.js";
 
@@ -10,6 +10,12 @@ const userSchema = new Schema({
 
     password: {
         type: String,
+        required: true
+    },
+
+    role: {
+        type: Types.ObjectId,
+        ref: "Role",
         required: true
     }
 });
