@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import '../models/Role.js'
 import 'dotenv/config';
 
 const { DATABASE_URI } = process.env;
