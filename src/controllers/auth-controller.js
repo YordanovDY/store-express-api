@@ -6,18 +6,25 @@ const authController = Router();
 authController.post('/register', async (req, res) => {
     const { email, password } = req.body;
 
-    if (!email || !password) {
-        return res.status(400).json({ message: 'Email and password are required', status: 400 });
-    }
-
     try {
         await authService.register(email, password);
 
         res.status(201).json({ message: 'User created', status: 201 });
 
     } catch (err) {
+        if(err.message.includes('range')){
+            return res.status(400).json({ message: err.message, status: 400 });
+        }
+
+        if(err.message.includes('required')){
+            return res.status(400).json({ message: err.message, status: 400 });
+        }
+
+        if(err.message.includes('Invalid')){
+            return res.status(400).json({ message: err.message, status: 400 });
+        }
+
         if (err.message === 'User already exists') {
-            console.error("Registration error:", err.message);
             return res.status(409).json({ message: err.message, status: 409 });
         }
 

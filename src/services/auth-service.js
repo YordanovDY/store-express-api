@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import User from "../models/User.js";
 import { ROLES } from '../config/constants.js';
+import { getErrorMessage } from '../utils/error-util.js'
 import 'dotenv/config';
 
 const { JWT_SECRET } = process.env;
@@ -14,13 +15,25 @@ const authService = {
 };
 
 async function register(email, password) {
-    const foundUser = await findUser(email);
+    let foundUser = null;
+    
+    try {
+        foundUser = await findUser(email);
+        
+    } catch (err) {
+        throw new Error(getErrorMessage(err));
+    }
 
     if (foundUser) {
         throw new Error('User already exists');
     }
 
-    return User.create({ email, password, role: ROLES.Customer });
+    try {
+        return User.create({ email, password, role: ROLES.Customer });
+
+    } catch (err) {
+        throw new Error(getErrorMessage(err));
+    }
 }
 
 async function login(email, password) {
@@ -56,7 +69,7 @@ function verifyAuthToken(authToken) {
 
 function clearSessionData(req, res) {
     return new Promise((resolve, reject) => {
-        
+
         req.session.destroy((err) => {
 
             if (err) {

@@ -6,12 +6,15 @@ const userSchema = new Schema({
     email: {
         type: String,
         unique: true,
-        required: true
+        required: [true, 'Email is required!'],
+        match: [/^[a-zA-z]+[a-zA-Z0-9\.]*[a-zA-z0-9]+@[a-zA-z]{2,}\.[a-zA-z]{2,}$/, 'Invalid email address!'],
     },
 
     password: {
         type: String,
-        required: true
+        required: [true, 'Password is required!'],
+        minLength: [6, 'Password must be in range 6 to 24 characters!'],
+        maxLength: [24, 'Password must be in range 6 to 24 characters!']
     },
 
     role: {
@@ -22,12 +25,14 @@ const userSchema = new Schema({
 
     fullName: {
         type: String,
-        default: ''
+        default: '',
+        match: [/^[a-zA-z -]+$/, 'Invalid name format!']
     },
 
     phoneNumber: {
         type: String,
-        default: ''
+        default: '',
+        match: [/^[0-9]{8,12}$/, 'Invalid phone format']
     },
 
     address: {
@@ -35,20 +40,18 @@ const userSchema = new Schema({
         default: ''
     },
 
-    // TODO: Add cart property
-    /*
     cart: {
         type: [{
-        _id: false,
-        quantity: Number,
-        product: {
-            type: Types.ObjectId,
-            ref: 'Product'
-        }
-    }],
-    default: []
-},
-    */
+            _id: false,
+            quantity: Number,
+            product: {
+                type: Types.ObjectId,
+                ref: 'Product'
+            }
+        }],
+        default: []
+    },
+
 });
 
 userSchema.pre('save', async function () {
