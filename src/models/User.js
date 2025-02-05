@@ -8,36 +8,43 @@ const userSchema = new Schema({
         unique: true,
         required: [true, 'Email is required!'],
         match: [/^[a-zA-z]+[a-zA-Z0-9\.]*[a-zA-z0-9]+@[a-zA-z]{2,}\.[a-zA-z]{2,}$/, 'Invalid email address!'],
+        lowercase: true,
+        trim: true
     },
 
     password: {
         type: String,
         required: [true, 'Password is required!'],
         minLength: [6, 'Password must be in range 6 to 24 characters!'],
-        maxLength: [24, 'Password must be in range 6 to 24 characters!']
+        maxLength: [24, 'Password must be in range 6 to 24 characters!'],
+        trim: true
     },
 
     role: {
         type: Types.ObjectId,
         ref: "Role",
-        required: true
+        required: true,
+        trim: true
     },
 
     fullName: {
         type: String,
         default: '',
-        match: [/^[a-zA-z -]+$/, 'Invalid name format!']
+        match: [/^[a-zA-z -]+$/, 'Invalid name format!'],
+        trim: true
     },
 
     phoneNumber: {
         type: String,
         default: '',
-        match: [/^[0-9]{8,12}$/, 'Invalid phone format']
+        match: [/^[0-9]{8,12}$/, 'Invalid phone format'],
+        trim: true
     },
 
     address: {
         type: String,
-        default: ''
+        default: '',
+        trim: true
     },
 
     cart: {

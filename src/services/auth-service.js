@@ -38,6 +38,9 @@ async function register(email, password) {
 }
 
 async function login(email, password) {
+    email = email.toLowerCase().trim();
+    password = password.trim();
+
     const foundUser = await findUser(email);
     console.log(foundUser);
 
