@@ -2,11 +2,16 @@ import Product from "../models/Product.js";
 import { getErrorMessage } from "../utils/error-util.js";
 
 const productService = {
-    addProduct
+    addProduct,
+    getProducts
+}
+
+function getProducts() {
+    return Product.find();
 }
 
 async function addProduct(newProduct) {
-    let {
+    const {
         name,
         imageUrl,
         quantity,

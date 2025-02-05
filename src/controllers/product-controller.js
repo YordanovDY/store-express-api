@@ -3,8 +3,15 @@ import productService from "../services/product-service.js";
 
 const productController = Router();
 
-productController.get('/catalog', (req, res) => {
+productController.get('/catalog', async (req, res) => {
+    try {
+        const result = await productService.getProducts();
+        res.json(result);
 
+    } catch (err) {
+        console.error("Registration error:", err.message);
+        res.status(500).json({ message: 'Internal server error', status: 500 });
+    }
 });
 
 productController.post('/catalog', async (req, res) => {
