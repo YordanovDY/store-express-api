@@ -42,7 +42,7 @@ authController.post('/login', async (req, res) => {
 
     try {
         const userData = await authService.login(email, password);
-        const { token, id, role } = userData;
+        const { token } = userData;
         const user = userData;
 
         req.session.userData = userData;
@@ -74,7 +74,8 @@ authController.get('/user', async (req, res) => {
 
     try {
         const tokenData = authService.verifyAuthToken(authToken);
-        res.status(200).json({ message: 'Valid authentication token', status: 200, result: { user: tokenData } });
+        const userData = await authService.getUser(tokenData._id);
+        res.status(200).json({ message: 'Valid authentication token', status: 200, result: { user: userData } });
 
     } catch (err) {
         await authService.clearSessionData(req, res);

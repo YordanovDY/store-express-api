@@ -12,14 +12,15 @@ const authService = {
     login,
     clearSessionData,
     verifyAuthToken,
+    getUser
 };
 
 async function register(email, password) {
     let foundUser = null;
-    
+
     try {
         foundUser = await findUser(email);
-        
+
     } catch (err) {
         throw new Error(getErrorMessage(err));
     }
@@ -38,6 +39,8 @@ async function register(email, password) {
 
 async function login(email, password) {
     const foundUser = await findUser(email);
+    console.log(foundUser);
+
 
     if (!foundUser) {
         throw new Error('Invalid user or password');
@@ -90,6 +93,10 @@ function clearSessionData(req, res) {
 
 async function findUser(email) {
     return User.findOne({ email });
+}
+
+async function getUser(id) {
+    return User.findOne({ id }, { password: 0 });
 }
 
 export default authService;
