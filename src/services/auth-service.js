@@ -59,6 +59,10 @@ async function login(email, password) {
 
     return {
         ...payload,
+        fullName: foundUser.fullName,
+        phoneNumber: foundUser.phoneNumber,
+        address: foundUser.address,
+        cart: foundUser.cart,
         token
     };
 }

@@ -43,11 +43,7 @@ authController.post('/login', async (req, res) => {
     try {
         const userData = await authService.login(email, password);
         const { token, id, role } = userData;
-        const user = {
-            id,
-            email: userData.email,
-            role
-        };
+        const user = userData;
 
         req.session.userData = userData;
 
