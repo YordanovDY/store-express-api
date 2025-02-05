@@ -1,6 +1,5 @@
 import { Router } from "express";
 import authService from "../services/auth-service.js";
-import 'dotenv/config';
 
 const authController = Router();
 

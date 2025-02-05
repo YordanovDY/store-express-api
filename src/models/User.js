@@ -5,7 +5,8 @@ import { SALT_ROUNDS } from "../config/constants.js";
 const userSchema = new Schema({
     email: {
         type: String,
-        required: true,
+        unique: true,
+        required: true
     },
 
     password: {
@@ -35,6 +36,19 @@ const userSchema = new Schema({
     },
 
     // TODO: Add cart property
+    /*
+    cart: {
+        type: [{
+        _id: false,
+        quantity: Number,
+        product: {
+            type: Types.ObjectId,
+            ref: 'Product'
+        }
+    }],
+    default: []
+},
+    */
 });
 
 userSchema.pre('save', async function () {
