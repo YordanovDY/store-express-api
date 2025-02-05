@@ -17,7 +17,24 @@ const userSchema = new Schema({
         type: Types.ObjectId,
         ref: "Role",
         required: true
-    }
+    },
+
+    fullName: {
+        type: String,
+        default: ''
+    },
+
+    phoneNumber: {
+        type: String,
+        default: ''
+    },
+
+    address: {
+        type: String,
+        default: ''
+    },
+
+    // TODO: Add cart property
 });
 
 userSchema.pre('save', async function () {
