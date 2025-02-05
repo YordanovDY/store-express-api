@@ -1,5 +1,6 @@
 import { Router } from "express";
 import productService from "../services/product-service.js";
+import authService from "../services/auth-service.js";
 
 const productController = Router();
 
@@ -15,6 +16,13 @@ productController.get('/catalog', async (req, res) => {
 });
 
 productController.post('/catalog', async (req, res) => {
+    try {
+        const authToken = req.cookies['Auth'];
+        authService.checkAuthRankII(authToken)
+    } catch (err) {
+        res.status(403).json({message: err.message, status: 403});
+    }
+
     const newProduct = req.body;
 
     try {

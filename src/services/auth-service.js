@@ -12,7 +12,8 @@ const authService = {
     login,
     clearSessionData,
     verifyAuthToken,
-    getUser
+    getUser,
+    checkAuthRankII,
 };
 
 async function register(email, password) {
@@ -75,6 +76,16 @@ async function login(email, password) {
 
 function verifyAuthToken(authToken) {
     return jwt.verify(authToken, JWT_SECRET);
+}
+
+function checkAuthRankII(authToken) {
+    const token = verifyAuthToken(authToken);
+    const roleId = token.role;
+    const authRoles = [ROLES.StoreManager, ROLES.Admin];
+
+    if(!authRoles.includes(roleId)){
+        throw new Error('User does not have authorization rank II');
+    }
 }
 
 function clearSessionData(req, res) {
