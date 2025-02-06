@@ -1,10 +1,12 @@
 
 import User from '../models/User.js';
-
 const userService = {
     getUser,
     getCart,
-    setAdditionalData
+    setAdditionalData,
+    getCartItem,
+    addCartItem,
+    replaceCartItem
 }
 
 function getUser(user) {
@@ -20,8 +22,32 @@ function setAdditionalData(id, fullName, phoneNumber, address) {
 }
 
 async function getCart(user) {
-    const result = await User.findOne({ _id: user.id }, { cart: 1 });
+    const result = await User.findOne({ _id: user.id }, { cart: 1 }).populate('cart.product');
     return result.cart;
+}
+
+async function getCartItem(user, item) {
+    const result = await User.findOne({ _id: user.id }, { cart: 1 });
+    return result.cart.find(i => i.product.toString() === item);
+}
+
+async function addCartItem(user, itemData) {
+    const { item, quantity } = itemData;
+
+    const userDoc = await User.findOne({ _id: user.id });
+    userDoc.cart.push({ product: item, quantity });
+    console.log(userDoc);
+
+    return await userDoc.save();
+}
+
+async function replaceCartItem(user, itemData) {
+    const { item, quantity } = itemData;
+
+    return User.updateOne(
+        { _id: user.id, "cart.product": item },
+        { $set: { "cart.$.quantity": quantity } }
+    );
 }
 
 export default userService;

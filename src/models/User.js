@@ -16,7 +16,6 @@ const userSchema = new Schema({
         type: String,
         required: [true, 'Password is required!'],
         minLength: [6, 'Password must be in range 6 to 24 characters!'],
-        maxLength: [24, 'Password must be in range 6 to 24 characters!'],
         trim: true
     },
 

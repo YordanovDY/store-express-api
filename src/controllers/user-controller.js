@@ -62,4 +62,33 @@ userController.get('/cart', async (req, res) => {
     }
 });
 
+userController.put('/cart', async (req, res) => {
+    const user = req.user;
+    const { item, quantity } = req.body;
+
+    if (!user) {
+        return res.status(401).json({ message: 'Missing authentication token', status: 401 });
+    }
+
+    try {
+        const cartItem = await userService.getCartItem(user, item);
+
+        if (!cartItem) {
+            const result = await userService.addCartItem(user, { item, quantity });
+            return res.json(result);
+        }
+
+        if (cartItem.quantity === quantity) {
+            return res.status(200).json({ message: 'Not modified item', status: 200 });
+        }
+
+        await userService.replaceCartItem(user, { item, quantity });
+        res.json({ message: 'Item updated', status: 200, newData: { item, quantity } });
+
+    } catch (err) {
+        console.error("Server error:", err.message);
+        res.status(500).json({ message: 'Internal server error', status: 500 });
+    }
+});
+
 export default userController;
