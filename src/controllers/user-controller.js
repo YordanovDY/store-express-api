@@ -1,6 +1,6 @@
-import { Router } from "express";
-import userService from "../services/user-service.js";
-import { getErrorMessage } from "../utils/error-util.js"
+import { Router } from 'express';
+import userService from '../services/user-service.js';
+import { getErrorMessage } from '../utils/error-util.js'
 
 const userController = Router();
 
@@ -16,7 +16,7 @@ userController.get('/data', async (req, res) => {
         res.json(userInfo);
 
     } catch (err) {
-        console.error("Server error:", err.message);
+        console.error('Server error:', err.message);
         res.status(500).json({ message: 'Internal server error', status: 500 });
     }
 });
@@ -36,11 +36,11 @@ userController.put('/data', async (req, res) => {
     } catch (err) {
         const errorMsg = getErrorMessage(err);
 
-        if (errorMsg.includes("format")) {
+        if (errorMsg.includes('format')) {
             return res.status(400).json({ message: errorMsg, status: 400 });
         }
 
-        console.error("Server error:", errorMsg);
+        console.error('Server error:', errorMsg);
         res.status(500).json({ message: 'Internal server error', status: 500 });
     }
 });
@@ -57,7 +57,7 @@ userController.get('/cart', async (req, res) => {
         res.json(cartInfo);
 
     } catch (err) {
-        console.error("Server error:", err.message);
+        console.error('Server error:', err.message);
         res.status(500).json({ message: 'Internal server error', status: 500 });
     }
 });
@@ -92,7 +92,7 @@ userController.post('/cart', async (req, res) => {
             return res.status(400).json({ message: errorMsg, status: 400 });
         }
 
-        console.error("Server error:", err.message);
+        console.error('Server error:', err.message);
         res.status(500).json({ message: 'Internal server error', status: 500 });
     }
 });
@@ -111,7 +111,7 @@ userController.delete('/cart/:productId', async (req, res) => {
         res.json({ message: 'Item is removed from the cart', status: 200 });
 
     } catch (err) {
-        console.error("Server error:", err.message);
+        console.error('Server error:', err.message);
         res.status(500).json({ message: 'Internal server error', status: 500 });
     }
 });
