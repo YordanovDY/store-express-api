@@ -30,7 +30,7 @@ userController.put('/data', async (req, res) => {
     }
 
     try {
-        const result = await userService.setAdditionalData(user.id, fullName, phoneNumber, address);
+        await userService.setAdditionalData(user.id, fullName, phoneNumber, address);
         res.json({ message: 'User data updated successfully', status: 200, newData: { id: user.id, fullName, phoneNumber, address } });
 
     } catch (err) {
@@ -62,7 +62,7 @@ userController.get('/cart', async (req, res) => {
     }
 });
 
-userController.put('/cart', async (req, res) => {
+userController.post('/cart', async (req, res) => {
     const user = req.user;
     const { item, quantity } = req.body;
 
@@ -84,6 +84,25 @@ userController.put('/cart', async (req, res) => {
 
         await userService.replaceCartItem(user, { item, quantity });
         res.json({ message: 'Item updated', status: 200, newData: { item, quantity } });
+
+    } catch (err) {
+        console.error("Server error:", err.message);
+        res.status(500).json({ message: 'Internal server error', status: 500 });
+    }
+});
+
+userController.delete('/cart/:productId', async (req, res) => {
+    const user = req.user;
+
+    if (!user) {
+        return res.status(401).json({ message: 'Missing authentication token', status: 401 });
+    }
+
+    const { productId } = req.params;
+
+    try {
+        await userService.removeCartItem(user, productId);
+        res.json({ message: 'Item is removed from the cart', status: 200 });
 
     } catch (err) {
         console.error("Server error:", err.message);

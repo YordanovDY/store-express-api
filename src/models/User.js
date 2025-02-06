@@ -49,10 +49,15 @@ const userSchema = new Schema({
     cart: {
         type: [{
             _id: false,
-            quantity: Number,
+            quantity: {
+                type: Number,
+                required: [true, 'Product quantity is required!'],
+                min: [1, 'Product quantity must be a positive number!']
+            },
             product: {
                 type: Types.ObjectId,
-                ref: 'Product'
+                ref: 'Product',
+                required: [true, 'Product is required!']
             }
         }],
         default: []

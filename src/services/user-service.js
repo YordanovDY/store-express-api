@@ -6,7 +6,8 @@ const userService = {
     setAdditionalData,
     getCartItem,
     addCartItem,
-    replaceCartItem
+    replaceCartItem,
+    removeCartItem
 }
 
 function getUser(user) {
@@ -46,7 +47,15 @@ async function replaceCartItem(user, itemData) {
 
     return User.updateOne(
         { _id: user.id, "cart.product": item },
-        { $set: { "cart.$.quantity": quantity } }
+        { $set: { "cart.$.quantity": quantity } },
+        {runValidators: true}
+    );
+}
+
+async function removeCartItem(user, productId) {
+    return User.updateOne(
+        { _id: user.id },
+        { $pull: { cart: { product: productId } } }
     );
 }
 
