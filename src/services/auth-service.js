@@ -7,7 +7,6 @@ import asyncJWT from '../utils/jwt-util.js';
 const authService = {
     register,
     login,
-    getUser,
     checkPermissionLevel_II,
 };
 
@@ -82,10 +81,6 @@ function checkPermissionLevel_II(user) {
 
 async function findUser(email) {
     return User.findOne({ email });
-}
-
-async function getUser(id) {
-    return User.findOne({ id }, { password: 0 });
 }
 
 export default authService;

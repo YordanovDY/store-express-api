@@ -1,7 +1,6 @@
 import { Router } from "express";
 import productService from "../services/product-service.js";
 import authService from "../services/auth-service.js";
-import { AUTH_COOKIE_NAME } from "../config/constants.js";
 
 const productController = Router();
 
