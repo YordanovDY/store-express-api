@@ -2,6 +2,7 @@ import express from 'express';
 import expressSession from 'express-session';
 import cookieParser from 'cookie-parser';
 import allowCORSRequests from '../middlewares/cors-middleware.js';
+import { authMiddleware } from '../middlewares/auth-middleware.js';
 import 'dotenv/config';
 
 const { SESSION_SECRET } = process.env;
@@ -23,4 +24,6 @@ export default function expressInit(app) {
         'Access-Control-Allow-Methods': 'OPTIONS, GET, POST, PUT, PATCH, DELETE',
         'Access-Control-Allow-Headers': 'Content-Type, Authorization'
     }));
+
+    app.use(authMiddleware());
 }

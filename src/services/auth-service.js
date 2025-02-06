@@ -1,19 +1,14 @@
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
 import User from "../models/User.js";
 import { ROLES } from '../config/constants.js';
 import { getErrorMessage } from '../utils/error-util.js'
-import 'dotenv/config';
-
-const { JWT_SECRET } = process.env;
+import asyncJWT from '../utils/jwt-util.js';
 
 const authService = {
     register,
     login,
-    clearSessionData,
-    verifyAuthToken,
     getUser,
-    checkAuthRankII,
+    checkPermissionLevel_II,
 };
 
 async function register(email, password) {
@@ -43,8 +38,6 @@ async function login(email, password) {
     password = password.trim();
 
     const foundUser = await findUser(email);
-    console.log(foundUser);
-
 
     if (!foundUser) {
         throw new Error('Invalid user or password');
@@ -62,7 +55,7 @@ async function login(email, password) {
         role: foundUser.role,
     }
 
-    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' });
+    const token = await asyncJWT.signAuthToken(payload);
 
     return {
         ...payload,
@@ -74,35 +67,17 @@ async function login(email, password) {
     };
 }
 
-function verifyAuthToken(authToken) {
-    return jwt.verify(authToken, JWT_SECRET);
-}
+function checkPermissionLevel_II(user) {
+    if (!user) {
+        throw new Error('User does not have permission level II');
+    }
 
-function checkAuthRankII(authToken) {
-    const token = verifyAuthToken(authToken);
-    const roleId = token.role;
+    const roleId = user.role;
     const authRoles = [ROLES.StoreManager, ROLES.Admin];
 
-    if(!authRoles.includes(roleId)){
-        throw new Error('User does not have authorization rank II');
+    if (!authRoles.includes(roleId)) {
+        throw new Error('User does not have permission level II');
     }
-}
-
-function clearSessionData(req, res) {
-    return new Promise((resolve, reject) => {
-
-        req.session.destroy((err) => {
-
-            if (err) {
-                return reject(new Error('Logout failed'));
-            }
-
-            res.clearCookie('Auth');
-            res.clearCookie('connect.sid');
-
-            resolve();
-        });
-    });
 }
 
 async function findUser(email) {

@@ -1,5 +1,7 @@
 import { Router } from "express";
 import authService from "../services/auth-service.js";
+import clearSessionData from "../utils/clear-session-util.js";
+import { AUTH_COOKIE_NAME } from "../config/constants.js";
 
 const authController = Router();
 
@@ -28,7 +30,7 @@ authController.post('/register', async (req, res) => {
             return res.status(409).json({ message: err.message, status: 409 });
         }
 
-        console.error("Registration error:", err.message);
+        console.error("Server error:", err.message);
         res.status(500).json({ message: 'Internal server error', status: 500 });
     }
 });
@@ -48,7 +50,7 @@ authController.post('/login', async (req, res) => {
         req.session.userData = userData;
 
         res.status(200)
-            .cookie('Auth', token, {
+            .cookie(AUTH_COOKIE_NAME, token, {
                 httpOnly: true,
                 maxAge: 1000 * 60 * 60 * 24 * 7
             })
@@ -56,50 +58,33 @@ authController.post('/login', async (req, res) => {
 
     } catch (err) {
         if (err.message === 'Invalid user or password') {
-            console.error("Registration error:", err.message);
             return res.status(401).json({ message: err.message, status: 401 });
         }
 
-        console.error("Registration error:", err.message);
+        console.error("Server error:", err.message);
         res.status(500).json({ message: 'Internal server error', status: 500 });
     }
 });
 
 authController.get('/user', async (req, res) => {
-    const authToken = req.cookies['Auth'];
+    const user = req.user;
 
-    if (!authToken) {
+    if (!user) {
         return res.status(401).json({ message: 'Missing authentication token', status: 401 });
     }
 
-    try {
-        const tokenData = authService.verifyAuthToken(authToken);
-        const userData = await authService.getUser(tokenData._id);
-        res.status(200).json({ message: 'Valid authentication token', status: 200, result: { user: userData } });
-
-    } catch (err) {
-        await authService.clearSessionData(req, res);
-        res.status(401).json({ message: err.message, status: 401 });
-    }
+    res.status(200).json({ message: 'Valid authentication token', status: 200, result: { user } });
 });
 
 authController.get('/logout', async (req, res) => {
-    const authToken = req.cookies['Auth'];
+    const user = req.user;
 
-    if (!authToken) {
+    if (!user) {
         return res.status(401).json({ message: 'Missing authentication token', status: 401 });
     }
 
     try {
-        authService.verifyAuthToken(authToken);
-
-    } catch (err) {
-        await authService.clearSessionData(req, res);
-        return res.status(401).json({ message: err.message, status: 401 });
-    }
-
-    try {
-        await authService.clearSessionData(req, res);
+        await clearSessionData(req, res);
         res.status(200).json({ message: 'User logged out', status: 200 });
 
     } catch (err) {

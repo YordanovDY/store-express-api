@@ -1,6 +1,7 @@
 import { Router } from "express";
 import productService from "../services/product-service.js";
 import authService from "../services/auth-service.js";
+import { AUTH_COOKIE_NAME } from "../config/constants.js";
 
 const productController = Router();
 
@@ -10,17 +11,18 @@ productController.get('/catalog', async (req, res) => {
         res.json(result);
 
     } catch (err) {
-        console.error("Registration error:", err.message);
+        console.error("Server error:", err.message);
         res.status(500).json({ message: 'Internal server error', status: 500 });
     }
 });
 
 productController.post('/catalog', async (req, res) => {
     try {
-        const authToken = req.cookies['Auth'];
-        authService.checkAuthRankII(authToken)
+        const user = req.user;
+        authService.checkPermissionLevel_II(user)
+
     } catch (err) {
-        res.status(403).json({message: err.message, status: 403});
+        return res.status(403).json({message: err.message, status: 403});
     }
 
     const newProduct = req.body;
@@ -38,7 +40,7 @@ productController.post('/catalog', async (req, res) => {
             return res.status(409).json({ message: err.message, status: 409 });
         }
 
-        console.error("Registration error:", err.message);
+        console.error("Server error:", err.message);
         res.status(500).json({ message: 'Internal server error', status: 500 });
     }
 });
