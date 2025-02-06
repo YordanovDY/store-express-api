@@ -86,6 +86,12 @@ userController.post('/cart', async (req, res) => {
         res.json({ message: 'Item updated', status: 200, newData: { item, quantity } });
 
     } catch (err) {
+        const errorMsg = getErrorMessage(err);
+
+        if (errorMsg.includes('is required') || errorMsg.includes('positive number')) {
+            return res.status(400).json({ message: errorMsg, status: 400 });
+        }
+
         console.error("Server error:", err.message);
         res.status(500).json({ message: 'Internal server error', status: 500 });
     }
