@@ -24,7 +24,7 @@ function setAdditionalData(id, fullName, phoneNumber, address) {
 }
 
 async function getCart(user) {
-    const result = await User.findOne({ _id: user.id }, { cart: 1 }).populate('cart.product');
+    const result = await User.findOne({ _id: user.id }, { cart: 1 }).populate({ path: 'cart.product', select: '-quantity' });
     return result.cart;
 }
 
