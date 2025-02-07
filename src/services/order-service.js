@@ -7,6 +7,7 @@ const validStatuses = ['Processing', 'Shipped', 'Delivered']
 
 const orderService = {
     getOrders,
+    getSingleOrder,
     placeAnOrder,
     changeStatus
 }
@@ -18,6 +19,15 @@ function getOrders(filter = { status: 'Processing' }) {
 
     try {
         return Order.find({ status: filter.status });
+
+    } catch (err) {
+        throw new Error(getErrorMessage(err));
+    }
+}
+
+function getSingleOrder(orderId) {
+    try {
+        return Order.findById(orderId);
 
     } catch (err) {
         throw new Error(getErrorMessage(err));

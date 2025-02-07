@@ -22,6 +22,19 @@ orderController.get('/', async (req, res) => {
     }
 });
 
+orderController.get('/:orderId', async (req, res) => {
+    const { orderId } = req.params;
+
+    try {
+        const result = await orderService.getSingleOrder(orderId);
+        res.json(result);
+
+    } catch (err) {
+        console.error('Server error:', err.message);
+        res.status(500).json({ message: 'Internal server error', status: 500 });
+    }
+});
+
 orderController.post('/', async (req, res) => {
     try {
         const user = req.user;
