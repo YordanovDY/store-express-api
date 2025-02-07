@@ -3,6 +3,7 @@ import expressSession from 'express-session';
 import cookieParser from 'cookie-parser';
 import allowCORSRequests from '../middlewares/cors-middleware.js';
 import { authMiddleware } from '../middlewares/auth-middleware.js';
+import { optionsMiddleware } from '../middlewares/options-middleware.js';
 import 'dotenv/config';
 
 const { SESSION_SECRET } = process.env;
@@ -26,4 +27,6 @@ export default function expressInit(app) {
     }));
 
     app.use(authMiddleware());
+
+    app.use(optionsMiddleware());
 }
