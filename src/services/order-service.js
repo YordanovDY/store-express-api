@@ -10,25 +10,29 @@ const orderService = {
 function placeAnOrder(user, cart) {
     const recipient = user.id;
 
-    const orderedAt = new Date.now();
+    const orderedAt = new Date;
 
-    let estimatedDelivery = new Date.now() + getDaysInMilliseconds(5);
+    let estimatedDelivery = new Date(orderedAt.getTime() + getDaysInMilliseconds(5));
 
     if (estimatedDelivery.getDay() === 6) {
-        estimatedDelivery += getDaysInMilliseconds(2);
+        estimatedDelivery = new Date(estimatedDelivery.getTime() + getDaysInMilliseconds(2));
 
     } else if (estimatedDelivery.getDay() === 0) {
-        estimatedDelivery += getDaysInMilliseconds(1);
+        estimatedDelivery = new Date(estimatedDelivery.getTime() + getDaysInMilliseconds(1));
     }
 
     let totalPrice = 0;
     for (const productData of cart) {
-        totalPrice = productData.product.price * productData.quantity;
+        console.log(productData.product.price, '*', productData.quantity);
+
+        totalPrice += productData.product.price * productData.quantity;
     }
 
-    totalPrice + DELIVERY_PRICE;
+    if (totalPrice < 100) {
+        totalPrice += DELIVERY_PRICE;
+    }
 
-    Order.create({
+    return Order.create({
         recipient,
         products: cart,
         orderedAt,
