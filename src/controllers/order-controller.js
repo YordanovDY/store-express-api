@@ -44,4 +44,27 @@ orderController.post('/', async (req, res) => {
     }
 });
 
+orderController.put('/:orderId', async (req, res) => {
+    const { orderId } = req.params;
+    const { status } = req.body;
+
+    console.log(orderId);
+
+
+    try {
+        await orderService.changeStatus(orderId, status);
+        res.json({ message: `Status of order ${orderId} has been changed to ${status}`, status: 200 });
+
+    } catch (err) {
+        const errorMsg = getErrorMessage(err);
+
+        if (errorMsg === 'Invalid filter status') {
+            return res.status(400).json({ message: errorMsg, status: 400 });
+        }
+
+        console.error('Server error:', errorMsg);
+        res.status(500).json({ message: 'Internal server error', status: 500 });
+    }
+});
+
 export default orderController;

@@ -3,16 +3,16 @@ import Order from '../models/Order.js';
 import { getErrorMessage } from '../utils/error-util.js';
 
 const DELIVERY_PRICE = 6;
+const validStatuses = ['Processing', 'Shipped', 'Delivered']
 
 const orderService = {
     getOrders,
-    placeAnOrder
+    placeAnOrder,
+    changeStatus
 }
 
-function getOrders(filter = {status: 'Processing'}) {
-    const statuses = ['Processing', 'Shipped', 'Delivered']
-
-    if (!statuses.includes(filter.status)) {
+function getOrders(filter = { status: 'Processing' }) {
+    if (!validStatuses.includes(filter.status)) {
         throw new Error('Invalid filter status');
     }
 
@@ -54,6 +54,14 @@ function placeAnOrder(user, cart) {
         estimatedDelivery,
         totalPrice
     });
+}
+
+function changeStatus(orderId, status) {
+    if (!validStatuses.includes(status)) {
+        throw new Error('Invalid filter status');
+    }
+
+    return Order.findByIdAndUpdate(orderId, { status }, { runValidators: true });
 }
 
 export default orderService;
