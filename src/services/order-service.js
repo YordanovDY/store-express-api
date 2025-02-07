@@ -9,7 +9,8 @@ const orderService = {
     getOrders,
     getSingleOrder,
     placeAnOrder,
-    changeStatus
+    changeStatus,
+    cancelOrder
 }
 
 function getOrders(filter = { status: 'Processing' }) {
@@ -72,6 +73,10 @@ function changeStatus(orderId, status) {
     }
 
     return Order.findByIdAndUpdate(orderId, { status }, { runValidators: true });
+}
+
+function cancelOrder(orderId) {
+    return Order.findByIdAndDelete(orderId);
 }
 
 export default orderService;
