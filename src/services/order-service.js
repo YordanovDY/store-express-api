@@ -35,7 +35,7 @@ function getSingleOrder(orderId) {
     }
 }
 
-function placeAnOrder(user, cart) {
+function placeAnOrder(user, cart, paymentMethod) {
     const recipient = user.id;
 
     const orderedAt = new Date;
@@ -63,7 +63,8 @@ function placeAnOrder(user, cart) {
         products: cart,
         orderedAt,
         estimatedDelivery,
-        totalPrice
+        totalPrice,
+        paymentMethod
     });
 }
 

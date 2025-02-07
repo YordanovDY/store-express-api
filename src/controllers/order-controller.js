@@ -37,6 +37,8 @@ orderController.get('/:orderId', async (req, res) => {
 
 orderController.post('/', async (req, res) => {
     try {
+        const { paymentMethod } = req.body;
+
         const user = req.user;
         const cart = await userService.getCart(user);
 
@@ -44,13 +46,17 @@ orderController.post('/', async (req, res) => {
             return res.status(400).json({ message: 'Cart is empty', status: 400 });
         }
 
-        const result = await orderService.placeAnOrder(user, cart);
+        const result = await orderService.placeAnOrder(user, cart, paymentMethod);
         await userService.emptyCart(user);
 
         res.status(201).json(result);
 
     } catch (err) {
         const errorMsg = getErrorMessage(err);
+
+        if (errorMsg.includes('valid enum value')) {
+            return res.status(400).json({ message: 'Invalid Payment Method', status: 400 });
+        }
 
         console.error('Server error:', errorMsg);
         res.status(500).json({ message: 'Internal server error', status: 500 });
@@ -83,7 +89,7 @@ orderController.delete('/:orderId', async (req, res) => {
     try {
         const order = await orderService.getSingleOrder(orderId);
 
-        if(!order){
+        if (!order) {
             return res.status(404).json({ message: 'Order not found', status: 404 });
         }
 

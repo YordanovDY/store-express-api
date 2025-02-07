@@ -22,6 +22,12 @@ const orderSchema = new Schema({
         required: [true, 'Total price is required!']
     },
 
+    paymentMethod: {
+        type: String,
+        default: 'In Cash',
+        enum: ['In Cash', 'Card Payment']
+    },
+
     products: {
         type: [{
             _id: false,
