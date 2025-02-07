@@ -1,10 +1,27 @@
 import { getDaysInMilliseconds } from '../utils/time-in-ms.js'
 import Order from '../models/Order.js';
+import { getErrorMessage } from '../utils/error-util.js';
 
 const DELIVERY_PRICE = 6;
 
 const orderService = {
+    getOrders,
     placeAnOrder
+}
+
+function getOrders(filter = {status: 'Processing'}) {
+    const statuses = ['Processing', 'Shipped', 'Delivered']
+
+    if (!statuses.includes(filter.status)) {
+        throw new Error('Invalid filter status');
+    }
+
+    try {
+        return Order.find({ status: filter.status });
+
+    } catch (err) {
+        throw new Error(getErrorMessage(err));
+    }
 }
 
 function placeAnOrder(user, cart) {

@@ -5,6 +5,23 @@ import { getErrorMessage } from "../utils/error-util.js";
 
 const orderController = Router();
 
+orderController.get('/', async (req, res) => {
+    const status = req.options?.status;
+
+    try {
+        const result = await orderService.getOrders({ status });
+        res.json(result);
+
+    } catch (err) {
+        if (err.message === 'Invalid filter status') {
+            return res.status(400).json({ message: err.message, status: 400 });
+        }
+
+        console.error('Server error:', err.message);
+        res.status(500).json({ message: 'Internal server error', status: 500 });
+    }
+});
+
 orderController.post('/', async (req, res) => {
     try {
         const user = req.user;
