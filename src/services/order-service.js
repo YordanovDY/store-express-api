@@ -23,8 +23,6 @@ function placeAnOrder(user, cart) {
 
     let totalPrice = 0;
     for (const productData of cart) {
-        console.log(productData.product.price, '*', productData.quantity);
-
         totalPrice += productData.product.price * productData.quantity;
     }
 

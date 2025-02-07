@@ -9,8 +9,15 @@ orderController.post('/', async (req, res) => {
     try {
         const user = req.user;
         const cart = await userService.getCart(user);
+
+        if (cart.length === 0) {
+            return res.status(400).json({ message: 'Cart is empty', status: 400 });
+        }
+
         const result = await orderService.placeAnOrder(user, cart);
-        res.json(result);
+        await userService.emptyCart(user);
+
+        res.status(201).json(result);
 
     } catch (err) {
         const errorMsg = getErrorMessage(err);
