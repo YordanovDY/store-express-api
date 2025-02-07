@@ -74,8 +74,8 @@ userController.post('/cart', async (req, res) => {
         const cartItem = await userService.getCartItem(user, item);
 
         if (!cartItem) {
-            const result = await userService.addCartItem(user, { item, quantity });
-            return res.json(result);
+            await userService.addCartItem(user, { item, quantity });
+            return res.json({ product: item, quantity });
         }
 
         if (cartItem.quantity === quantity) {
@@ -111,7 +111,13 @@ userController.delete('/cart/:productId', async (req, res) => {
         res.json({ message: 'Item is removed from the cart', status: 200 });
 
     } catch (err) {
-        console.error('Server error:', err.message);
+        const errorMsg = getErrorMessage(err);
+
+        if (errorMsg.includes('Cast to ObjectId failed')) {
+            return res.status(404).json({ message: 'Item not found in the cart', status: 404 });
+        }
+
+        console.error('Server error:', errorMsg);
         res.status(500).json({ message: 'Internal server error', status: 500 });
     }
 });
