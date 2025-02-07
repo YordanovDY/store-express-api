@@ -83,6 +83,10 @@ orderController.delete('/:orderId', async (req, res) => {
     try {
         const order = await orderService.getSingleOrder(orderId);
 
+        if(!order){
+            return res.status(404).json({ message: 'Order not found', status: 404 });
+        }
+
         if (order.status !== 'Processing') {
             return res.status(409).json({ message: 'Cannot cancel an order with status other than [Processing]', status: 409 });
         }
