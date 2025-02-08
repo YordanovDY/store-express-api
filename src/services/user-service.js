@@ -38,7 +38,6 @@ async function addCartItem(user, itemData) {
 
     const userDoc = await User.findOne({ _id: user.id });
     userDoc.cart.push({ product: item, quantity });
-    console.log(userDoc);
 
     return await userDoc.save();
 }

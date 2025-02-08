@@ -1,6 +1,7 @@
 import { Router } from "express";
 import orderService from "../services/order-service.js";
 import userService from "../services/user-service.js";
+import productService from '../services/product-service.js';
 import { getErrorMessage } from "../utils/error-util.js";
 
 const orderController = Router();
@@ -46,7 +47,21 @@ orderController.post('/', async (req, res) => {
             return res.status(400).json({ message: 'Cart is empty', status: 400 });
         }
 
-        const result = await orderService.placeAnOrder(user, cart, paymentMethod);
+        let checkedCart = null;
+
+        try {
+            checkedCart = await productService.checkForAvailabilityAndCorrect(cart);
+
+        } catch (err) {
+            return res.status(500).json({ message: err.message, status: 500 });
+        }
+
+        if (checkedCart.length === 0) {
+            await userService.emptyCart(user);
+            return res.status(400).json({ message: 'Cart is empty', status: 400 });
+        }
+
+        const result = await orderService.placeAnOrder(user, checkedCart, paymentMethod);
         await userService.emptyCart(user);
 
         res.status(201).json(result);
