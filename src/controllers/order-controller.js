@@ -53,6 +53,7 @@ orderController.post('/', async (req, res) => {
             checkedCart = await productService.checkForAvailabilityAndCorrect(cart);
 
         } catch (err) {
+            console.log('Server error: ', err.message);
             return res.status(500).json({ message: err.message, status: 500 });
         }
 

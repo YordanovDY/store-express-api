@@ -66,31 +66,53 @@ async function checkForNameDuplications(productName) {
 }
 
 async function checkForAvailabilityAndCorrect(cart) {
+    const purchasedItems = {};
 
     for (let i = 0; i < cart.length; i++) {
 
         const productId = cart[i].product['_id'].toString();
-        
+
         let product = null;
 
         try {
             product = await getSingleProduct(productId);
-            
+
         } catch (err) {
             throw new Error('Something went wrong. Please try again!');
         }
 
-        if(product.quantity <= 0){
+        if (product.quantity <= 0) {
             cart.splice(i, 1);
 
-        } else if(product.quantity < cart[i].quantity){
+        } else if (product.quantity < cart[i].quantity) {
             cart[i].quantity = product.quantity;
         }
 
+        const itemId = productId;
+        const qty = cart[i].quantity;
+
+        purchasedItems[itemId] = qty;
+    }
+
+    try {
+        await subtractPurchasedQuantity(purchasedItems);
+
+    } catch (err) {
+        const errorMsg = getErrorMessage(err)
+        console.log(errorMsg);
+        throw new Error('Something went wrong. Please try again!');
     }
 
     return cart;
 
+}
+
+async function subtractPurchasedQuantity(purchasedItems) {
+    for (const itemId in purchasedItems) {
+        const product = await Product.findById(itemId);
+        const newQty = product.quantity - purchasedItems[itemId];
+        await Product.findByIdAndUpdate(itemId, {quantity: newQty}, { runValidators: true });
+    }
 }
 
 export default productService;
