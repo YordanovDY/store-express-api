@@ -1,6 +1,7 @@
 import { getDaysInMilliseconds } from '../utils/time-in-ms.js'
 import Order from '../models/Order.js';
 import { getErrorMessage } from '../utils/error-util.js';
+import { restoreProductQuantity } from '../utils/quantity-utils.js';
 
 const DELIVERY_PRICE = 6;
 const validStatuses = ['Processing', 'Shipped', 'Delivered']
@@ -28,7 +29,7 @@ function getOrders(filter = { status: 'Processing' }) {
 
 function getSingleOrder(orderId) {
     try {
-        return Order.findById(orderId);
+        return Order.findById(orderId).populate('recipient', {password: 0, role: 0, cart:0});
 
     } catch (err) {
         throw new Error(getErrorMessage(err));
@@ -48,7 +49,7 @@ function placeAnOrder(user, cart, paymentMethod) {
     } else if (estimatedDelivery.getDay() === 0) {
         estimatedDelivery = new Date(estimatedDelivery.getTime() + getDaysInMilliseconds(1));
     }
-
+    
     let totalPrice = 0;
     for (const productData of cart) {
         totalPrice += productData.product.price * productData.quantity;
@@ -76,8 +77,12 @@ function changeStatus(orderId, status) {
     return Order.findByIdAndUpdate(orderId, { status }, { runValidators: true });
 }
 
-function cancelOrder(orderId) {
-    return Order.findByIdAndDelete(orderId);
+async function cancelOrder(order) {
+    for (const product of order.products) {
+        await restoreProductQuantity(product);
+    }
+
+    return Order.findByIdAndDelete(order._id);
 }
 
 export default orderService;

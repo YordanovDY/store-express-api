@@ -113,7 +113,7 @@ orderController.delete('/:orderId', async (req, res) => {
             return res.status(409).json({ message: 'Cannot cancel an order with status other than [Processing]', status: 409 });
         }
 
-        await orderService.cancelOrder(orderId);
+        await orderService.cancelOrder(order);
         res.json({ message: `Order ${orderId} has been cancelled`, status: 200 });
 
     } catch (err) {

@@ -1,5 +1,6 @@
 import Product from "../models/Product.js";
 import { getErrorMessage } from "../utils/error-util.js";
+import { subtractPurchasedQuantity } from "../utils/quantity-utils.js";
 
 const productService = {
     addProduct,
@@ -83,7 +84,9 @@ async function checkForAvailabilityAndCorrect(cart) {
 
         if (product.quantity <= 0) {
             cart.splice(i, 1);
-
+            i--;
+            continue;
+            
         } else if (product.quantity < cart[i].quantity) {
             cart[i].quantity = product.quantity;
         }
@@ -92,6 +95,7 @@ async function checkForAvailabilityAndCorrect(cart) {
         const qty = cart[i].quantity;
 
         purchasedItems[itemId] = qty;
+
     }
 
     try {
@@ -105,14 +109,6 @@ async function checkForAvailabilityAndCorrect(cart) {
 
     return cart;
 
-}
-
-async function subtractPurchasedQuantity(purchasedItems) {
-    for (const itemId in purchasedItems) {
-        const product = await Product.findById(itemId);
-        const newQty = product.quantity - purchasedItems[itemId];
-        await Product.findByIdAndUpdate(itemId, {quantity: newQty}, { runValidators: true });
-    }
 }
 
 export default productService;
