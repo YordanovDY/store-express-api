@@ -71,7 +71,7 @@ function placeAnOrder(user, cart, paymentMethod) {
 
 function changeStatus(orderId, status) {
     if (!validStatuses.includes(status)) {
-        throw new Error('Invalid filter status');
+        throw new Error('Invalid status value');
     }
 
     return Order.findByIdAndUpdate(orderId, { status }, { runValidators: true });

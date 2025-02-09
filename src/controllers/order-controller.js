@@ -117,6 +117,16 @@ orderController.post('/', async (req, res) => {
 });
 
 orderController.put('/:orderId', async (req, res) => {
+    const user = req.user;
+    const authRoles = [ROLES.Admin, ROLES.StoreManager, ROLES.Supplier];
+
+    try {
+        authService.checkForPermissions(user, authRoles)
+
+    } catch (err) {
+        return res.status(403).json({ message: err.message, status: 403 });
+    }
+
     const { orderId } = req.params;
     const { status } = req.body;
 
@@ -127,8 +137,12 @@ orderController.put('/:orderId', async (req, res) => {
     } catch (err) {
         const errorMsg = getErrorMessage(err);
 
-        if (errorMsg === 'Invalid filter status') {
+        if (errorMsg === 'Invalid status value') {
             return res.status(400).json({ message: errorMsg, status: 400 });
+        }
+
+        if (errorMsg.includes('Cast to ObjectId failed')) {
+            return res.status(404).json({ message: 'Order not found', status: 404 });
         }
 
         console.error('Server error:', errorMsg);
