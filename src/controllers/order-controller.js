@@ -152,6 +152,8 @@ orderController.put('/:orderId', async (req, res) => {
 
 orderController.delete('/:orderId', async (req, res) => {
     const { orderId } = req.params;
+    const user = req.user;
+    const authRoles = [ROLES.Admin];
 
     try {
         const order = await orderService.getSingleOrder(orderId);
@@ -162,6 +164,18 @@ orderController.delete('/:orderId', async (req, res) => {
 
         if (order.status !== 'Processing') {
             return res.status(409).json({ message: 'Cannot cancel an order with status other than [Processing]', status: 409 });
+        }
+
+        try {
+            authService.checkForPermissions(user, authRoles)
+    
+        } catch (err) {
+            if(order.recipient.id.toString() === user?.id){
+                await orderService.cancelOrder(order);
+                return res.json({ message: `Order ${orderId} has been cancelled`, status: 200 });
+            }
+
+            return res.status(403).json({ message: err.message, status: 403 });
         }
 
         await orderService.cancelOrder(order);
