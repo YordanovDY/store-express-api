@@ -1,6 +1,7 @@
 import { Router } from "express";
 import productService from "../services/product-service.js";
 import authService from "../services/auth-service.js";
+import { ROLES } from "../config/constants.js";
 
 const productController = Router();
 
@@ -18,7 +19,8 @@ productController.get('/catalog', async (req, res) => {
 productController.post('/catalog', async (req, res) => {
     try {
         const user = req.user;
-        authService.checkPermissionLevel_II(user)
+        const authRoles = [ROLES.StoreManager, ROLES.Admin];
+        authService.checkForPermissions(user, authRoles);
 
     } catch (err) {
         return res.status(403).json({message: err.message, status: 403});

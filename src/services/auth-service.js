@@ -7,7 +7,7 @@ import asyncJWT from '../utils/jwt-util.js';
 const authService = {
     register,
     login,
-    checkPermissionLevel_II,
+    checkForPermissions,
 };
 
 async function register(email, password) {
@@ -66,16 +66,15 @@ async function login(email, password) {
     };
 }
 
-function checkPermissionLevel_II(user) {
+function checkForPermissions(user, authRoles) {
     if (!user) {
-        throw new Error('User does not have permission level II');
+        throw new Error('Permission denied');
     }
 
     const roleId = user.role;
-    const authRoles = [ROLES.StoreManager, ROLES.Admin];
 
     if (!authRoles.includes(roleId)) {
-        throw new Error('User does not have permission level II');
+        throw new Error('Permission denied');
     }
 }
 

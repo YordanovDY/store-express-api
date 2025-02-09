@@ -2,15 +2,34 @@ import { Router } from "express";
 import orderService from "../services/order-service.js";
 import userService from "../services/user-service.js";
 import productService from '../services/product-service.js';
+import authService from '../services/auth-service.js';
 import { getErrorMessage } from "../utils/error-util.js";
+import { ROLES } from "../config/constants.js";
 
 const orderController = Router();
 
 orderController.get('/', async (req, res) => {
+    const user = req.user;
+    const authRoles = [ROLES.Admin, ROLES.StoreManager, ROLES.Supplier];
+
+    try {
+        authService.checkForPermissions(user, authRoles)
+
+    } catch (err) {
+        return res.status(403).json({ message: err.message, status: 403 });
+    }
+
     const status = req.options?.status;
 
     try {
-        const result = await orderService.getOrders({ status });
+        let result = null;
+
+        if (!status) {
+            result = await orderService.getOrders({ status: 'Processing' });
+        } else {
+            result = await orderService.getOrders({ status });
+        }
+
         res.json(result);
 
     } catch (err) {
@@ -25,9 +44,27 @@ orderController.get('/', async (req, res) => {
 
 orderController.get('/:orderId', async (req, res) => {
     const { orderId } = req.params;
+    const user = req.user;
+    const authRoles = [ROLES.Admin, ROLES.StoreManager, ROLES.Supplier];
 
     try {
         const result = await orderService.getSingleOrder(orderId);
+
+        if (!result) {
+            return res.status(404).json({ message: 'Order not found', status: 404 });
+        }
+
+        try {
+            authService.checkForPermissions(user, authRoles)
+
+        } catch (err) {
+            if (result.recipient.id.toString() === user.id) {
+                return res.json(result);
+            }
+
+            return res.status(403).json({ message: err.message, status: 403 });
+        }
+
         res.json(result);
 
     } catch (err) {
