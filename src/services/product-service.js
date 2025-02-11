@@ -19,7 +19,29 @@ function getProducts(options) {
     }
 
     if (filter) {
-        // TODO
+        
+        // {brand: "ASUS"}
+        // {price: $lt: 1300}
+        // {characteristics: {char: "RAM", value: "16 GB"}}
+
+        const [field, value] = Object.entries(filter).at(0);
+
+        switch (field) {
+            case 'brand':
+                filters[field] = value;
+                break;
+
+            case 'price':
+                filters[field] = { $lt: value };
+                break;
+
+            case 'characteristics':
+                const char = value.char;
+                const charValue = value.value;
+                filters[field] = { char, value: charValue };
+                break;
+        }
+
     }
 
     if (typeof page !== 'number' || page < 1) {
