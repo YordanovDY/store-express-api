@@ -8,6 +8,10 @@ const productController = Router();
 productController.get('/catalog', async (req, res) => {
     const options = req.options;
 
+    if (!options.subcategory) {
+        return res.status(400).json({ message: 'Subcategory is required', status: 400 });
+    }
+
     try {
         const result = await productService.getProducts(options);
         res.json(result);
@@ -25,7 +29,7 @@ productController.post('/catalog', async (req, res) => {
         authService.checkForPermissions(user, authRoles);
 
     } catch (err) {
-        return res.status(403).json({message: err.message, status: 403});
+        return res.status(403).json({ message: err.message, status: 403 });
     }
 
     const newProduct = req.body;

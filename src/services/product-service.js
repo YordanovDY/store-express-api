@@ -22,7 +22,7 @@ function getProducts(options) {
 
     const skip = (page - 1) * limit;
 
-    return Product.find({ subcategory })
+    return Product.find({ subcategory, quantity: {$gt: 0} })
         .sort({ price: 'asc' })
         .skip(skip)
         .limit(limit);
