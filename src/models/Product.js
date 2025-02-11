@@ -1,6 +1,11 @@
 import { Schema, Types, model } from "mongoose";
 
 const productSchema = new Schema({
+    brand: {
+        type: String,
+        required: [true, 'Product brand is required!'],
+    },
+
     name: {
         type: String,
         unique: true,
@@ -25,6 +30,11 @@ const productSchema = new Schema({
     description: {
         type: String,
         required: [true, 'Product description is required!'],
+    },
+
+    createdAt: {
+        type: Number,
+        required: [true, 'Product creation timestamp is required!']
     },
 
     characteristics: {
