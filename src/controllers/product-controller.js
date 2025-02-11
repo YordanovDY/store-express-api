@@ -22,6 +22,17 @@ productController.get('/catalog', async (req, res) => {
     }
 });
 
+productController.get('/latest', async (req, res) => {
+    try {
+        const result = await productService.getLatestProducts();
+        res.json(result);
+
+    } catch (err) {
+        console.error("Server error:", err.message);
+        res.status(500).json({ message: 'Internal server error', status: 500 });
+    }
+});
+
 productController.post('/catalog', async (req, res) => {
     try {
         const user = req.user;

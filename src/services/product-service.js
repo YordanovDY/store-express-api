@@ -5,6 +5,7 @@ import { subtractPurchasedQuantity } from "../utils/quantity-utils.js";
 const productService = {
     addProduct,
     getProducts,
+    getLatestProducts,
     getSingleProduct,
     checkForAvailabilityAndCorrect
 }
@@ -22,10 +23,14 @@ function getProducts(options) {
 
     const skip = (page - 1) * limit;
 
-    return Product.find({ subcategory, quantity: {$gt: 0} })
+    return Product.find({ subcategory, quantity: { $gt: 0 } })
         .sort({ price: 'asc' })
         .skip(skip)
         .limit(limit);
+}
+
+function getLatestProducts() {
+    return Product.find({}).sort({ createdAt: 'desc' }).limit(5);
 }
 
 function getSingleProduct(productId) {
