@@ -9,8 +9,23 @@ const productService = {
     checkForAvailabilityAndCorrect
 }
 
-function getProducts() {
-    return Product.find();
+function getProducts(options) {
+    let { subcategory, page, limit } = options;
+
+    if (typeof page !== 'number' || page < 1) {
+        page = 1;
+    }
+
+    if (typeof limit !== 'number' || limit < 1) {
+        limit = 15;
+    }
+
+    const skip = (page - 1) * limit;
+
+    return Product.find({ subcategory })
+        .sort({ price: 'asc' })
+        .skip(skip)
+        .limit(limit);
 }
 
 function getSingleProduct(productId) {
@@ -86,7 +101,7 @@ async function checkForAvailabilityAndCorrect(cart) {
             cart.splice(i, 1);
             i--;
             continue;
-            
+
         } else if (product.quantity < cart[i].quantity) {
             cart[i].quantity = product.quantity;
         }

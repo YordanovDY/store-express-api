@@ -6,8 +6,10 @@ import { ROLES } from "../config/constants.js";
 const productController = Router();
 
 productController.get('/catalog', async (req, res) => {
+    const options = req.options;
+
     try {
-        const result = await productService.getProducts();
+        const result = await productService.getProducts(options);
         res.json(result);
 
     } catch (err) {
