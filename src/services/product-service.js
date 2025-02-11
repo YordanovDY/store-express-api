@@ -11,7 +11,16 @@ const productService = {
 }
 
 function getProducts(options) {
-    let { subcategory, page, limit } = options;
+    let { subcategory, page, limit, filter, sort } = options;
+    let filters = { subcategory, quantity: { $gt: 0 } };
+
+    if (!sort) {
+        sort = { price: 'asc' };
+    }
+
+    if (filter) {
+        // TODO
+    }
 
     if (typeof page !== 'number' || page < 1) {
         page = 1;
@@ -23,8 +32,8 @@ function getProducts(options) {
 
     const skip = (page - 1) * limit;
 
-    return Product.find({ subcategory, quantity: { $gt: 0 } })
-        .sort({ price: 'asc' })
+    return Product.find(filters)
+        .sort(sort)
         .skip(skip)
         .limit(limit);
 }
