@@ -10,16 +10,33 @@ const productService = {
     checkForAvailabilityAndCorrect
 }
 
-function getProducts(options) {
-    let { subcategory, page, limit, filter, sort } = options;
-    let filters = { subcategory, quantity: { $gt: 0 } };
+function getProducts(options, page = 1, search = '') {
+    page = Number(page);
+
+    let { subcategory, limit, filter, sort } = options;
+
+    let filters = null;
+
+    if (search) {
+        filters = {
+            name: {
+                $regex: search,
+                $options: 'i'
+            },
+            quantity: { $gt: 0 }
+        };
+
+    } else {
+        filters = { subcategory, quantity: { $gt: 0 } };
+
+    }
 
     if (!sort) {
         sort = { price: 'asc' };
     }
 
     if (filter) {
-        
+
         // {brand: "ASUS"}
         // {price: $lt: 1300}
         // {characteristics: {char: "RAM", value: "16 GB"}}

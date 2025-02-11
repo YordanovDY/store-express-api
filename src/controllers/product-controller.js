@@ -6,14 +6,20 @@ import { ROLES } from "../config/constants.js";
 const productController = Router();
 
 productController.get('/catalog', async (req, res) => {
+    let { search, page } = req.query;
+
     const options = req.options;
 
-    if (!options.subcategory) {
-        return res.status(400).json({ message: 'Subcategory is required', status: 400 });
+    if (!search) {
+        
+        if (!options || !options.subcategory) {
+            return res.status(400).json({ message: 'Subcategory is required', status: 400 });
+        }
+
     }
 
     try {
-        const result = await productService.getProducts(options);
+        const result = await productService.getProducts(options, page, search);
         res.json(result);
 
     } catch (err) {
