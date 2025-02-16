@@ -15,7 +15,7 @@ function getProducts(options, page = 1, search = '') {
 
     let { subcategory, limit, filter, sort } = options;
 
-    let filters = null;
+    let filters = {};
 
     if (search) {
         filters = {
@@ -49,7 +49,7 @@ function getProducts(options, page = 1, search = '') {
                 break;
 
             case 'price':
-                filters[field] = { $lt: value };
+                filters[field] = { $lte: value };
                 break;
 
             case 'characteristics':

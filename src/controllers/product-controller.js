@@ -8,10 +8,10 @@ const productController = Router();
 productController.get('/catalog', async (req, res) => {
     let { search, page } = req.query;
 
-    const options = req.options;
+    const options = req.options || {};
 
     if (!search) {
-        
+
         if (!options || !options.subcategory) {
             return res.status(400).json({ message: 'Subcategory is required', status: 400 });
         }
