@@ -29,8 +29,10 @@ productController.get('/catalog', async (req, res) => {
 });
 
 productController.get('/latest', async (req, res) => {
+    const limit = req.options?.limit;
+
     try {
-        const result = await productService.getLatestProducts();
+        const result = await productService.getLatestProducts(limit);
         res.json(result);
 
     } catch (err) {

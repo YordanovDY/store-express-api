@@ -77,8 +77,8 @@ function getProducts(options, page = 1, search = '') {
         .limit(limit);
 }
 
-function getLatestProducts() {
-    return Product.find({}).sort({ createdAt: 'desc' }).limit(5);
+function getLatestProducts(limit = 5) {
+    return Product.find({}).sort({ createdAt: 'desc' }).limit(limit);
 }
 
 function getSingleProduct(productId) {
