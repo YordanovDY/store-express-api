@@ -1,15 +1,12 @@
 import { Router } from 'express';
 import userService from '../services/user-service.js';
 import { getErrorMessage } from '../utils/error-util.js'
+import { requireToken } from '../middlewares/auth-middleware.js';
 
 const userController = Router();
 
-userController.get('/data', async (req, res) => {
+userController.get('/data', requireToken, async (req, res) => {
     const user = req.user;
-
-    if (!user) {
-        return res.status(401).json({ message: 'Missing authentication token', status: 401 });
-    }
 
     try {
         const userInfo = await userService.getUser(user);
@@ -21,13 +18,9 @@ userController.get('/data', async (req, res) => {
     }
 });
 
-userController.put('/data', async (req, res) => {
+userController.put('/data', requireToken, async (req, res) => {
     const user = req.user;
     const { fullName, phoneNumber, address } = req.body;
-
-    if (!user) {
-        return res.status(401).json({ message: 'Missing authentication token', status: 401 });
-    }
 
     try {
         await userService.setAdditionalData(user.id, fullName, phoneNumber, address);
@@ -45,12 +38,8 @@ userController.put('/data', async (req, res) => {
     }
 });
 
-userController.get('/cart', async (req, res) => {
+userController.get('/cart', requireToken, async (req, res) => {
     const user = req.user;
-
-    if (!user) {
-        return res.status(401).json({ message: 'Missing authentication token', status: 401 });
-    }
 
     try {
         const cartInfo = await userService.getCart(user);
@@ -62,13 +51,9 @@ userController.get('/cart', async (req, res) => {
     }
 });
 
-userController.post('/cart', async (req, res) => {
+userController.post('/cart', requireToken, async (req, res) => {
     const user = req.user;
     const { item, quantity } = req.body;
-
-    if (!user) {
-        return res.status(401).json({ message: 'Missing authentication token', status: 401 });
-    }
 
     try {
         const cartItem = await userService.getCartItem(user, item);
@@ -97,12 +82,8 @@ userController.post('/cart', async (req, res) => {
     }
 });
 
-userController.delete('/cart/:productId', async (req, res) => {
+userController.delete('/cart/:productId', requireToken, async (req, res) => {
     const user = req.user;
-
-    if (!user) {
-        return res.status(401).json({ message: 'Missing authentication token', status: 401 });
-    }
 
     const { productId } = req.params;
 
