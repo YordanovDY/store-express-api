@@ -21,3 +21,13 @@ export const authMiddleware = () => {
         }
     }
 }
+
+export const requireToken = (req, res, next) =>{
+    const user = req.user;
+
+    if (!user) {
+        return res.status(401).json({ message: 'Missing authentication token', status: 401 });
+    }
+
+    next();
+}

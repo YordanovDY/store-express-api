@@ -3,6 +3,7 @@ import authService from "../services/auth-service.js";
 import clearSessionData from "../utils/clear-session-util.js";
 import { AUTH_COOKIE_NAME } from "../config/constants.js";
 import { getDaysInMilliseconds } from '../utils/time-in-ms.js';
+import { requireToken } from "../middlewares/auth-middleware.js";
 
 const authController = Router();
 
@@ -67,23 +68,13 @@ authController.post('/login', async (req, res) => {
     }
 });
 
-authController.get('/user', async (req, res) => {
+authController.get('/user', requireToken, async (req, res) => {
     const user = req.user;
-
-    if (!user) {
-        return res.status(401).json({ message: 'Missing authentication token', status: 401 });
-    }
 
     res.status(200).json({ message: 'Valid authentication token', status: 200, result: { user } });
 });
 
-authController.get('/logout', async (req, res) => {
-    const user = req.user;
-
-    if (!user) {
-        return res.status(401).json({ message: 'Missing authentication token', status: 401 });
-    }
-
+authController.get('/logout', requireToken, async (req, res) => {
     try {
         await clearSessionData(req, res);
         res.status(200).json({ message: 'User logged out', status: 200 });
