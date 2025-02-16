@@ -5,6 +5,7 @@ import productService from '../services/product-service.js';
 import authService from '../services/auth-service.js';
 import { getErrorMessage } from "../utils/error-util.js";
 import { ROLES } from "../config/constants.js";
+import { requireToken } from "../middlewares/auth-middleware.js";
 
 const orderController = Router();
 
@@ -73,7 +74,7 @@ orderController.get('/:orderId', async (req, res) => {
     }
 });
 
-orderController.post('/', async (req, res) => {
+orderController.post('/', requireToken, async (req, res) => {
     try {
         const { paymentMethod } = req.body;
 
