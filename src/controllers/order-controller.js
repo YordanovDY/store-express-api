@@ -9,6 +9,8 @@ import { requireToken } from "../middlewares/auth-middleware.js";
 
 const orderController = Router();
 
+orderController.use(requireToken);
+
 orderController.get('/', async (req, res) => {
     const user = req.user;
     const authRoles = [ROLES.Admin, ROLES.StoreManager, ROLES.Supplier];
@@ -74,7 +76,7 @@ orderController.get('/:orderId', async (req, res) => {
     }
 });
 
-orderController.post('/', requireToken, async (req, res) => {
+orderController.post('/', async (req, res) => {
     try {
         const { paymentMethod } = req.body;
 

@@ -43,7 +43,7 @@ productController.get('/latest', async (req, res) => {
     }
 });
 
-productController.post('/catalog', async (req, res) => {
+productController.post('/catalog', requireToken, async (req, res) => {
     const user = req.user;
     const authRoles = [ROLES.StoreManager, ROLES.Admin];
 
