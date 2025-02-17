@@ -131,7 +131,7 @@ async function checkForNameDuplications(productName) {
         const foundProduct = await Product.findOne({ name: productName });
 
         if (foundProduct) {
-            throw new Error('Product name already exists!');
+            throw new Error('A product with this name already exists');
         }
 
     } catch (err) {
