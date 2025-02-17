@@ -7,7 +7,8 @@ const productService = {
     getProducts,
     getLatestProducts,
     getSingleProduct,
-    checkForAvailabilityAndCorrect
+    checkForAvailabilityAndCorrect,
+    updateProduct
 }
 
 function getProducts(options, page = 1, search = '') {
@@ -124,6 +125,31 @@ async function addProduct(newProduct) {
     } catch (err) {
         throw new Error(getErrorMessage(err));
     }
+}
+
+async function updateProduct(productId, productData) {
+    const {
+        brand,
+        name,
+        imageUrl,
+        quantity,
+        price,
+        description,
+        characteristics,
+        subcategory,
+    } = productData;
+
+
+    return Product.findByIdAndUpdate(productId, {
+        brand,
+        name,
+        imageUrl,
+        quantity,
+        price,
+        description,
+        characteristics,
+        subcategory
+    }, {runValidators: true})
 }
 
 async function checkForNameDuplications(productName) {

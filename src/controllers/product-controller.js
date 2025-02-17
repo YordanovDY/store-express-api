@@ -94,4 +94,45 @@ productController.get('/catalog/:productId', async (req, res) => {
     }
 });
 
+productController.put('/catalog/:productId', async (req, res) => {
+    const { productId } = req.params;
+    const productData = req.body;
+    const user = req.user;
+    const authRoles = [ROLES.Admin];
+
+    let product = null;
+    try {
+        product = await productService.getSingleProduct(productId);
+
+        if (!product) {
+            return res.status(404).json({ message: 'Product not found', status: 404 });
+        }
+
+        authService.checkForPermissions(user, authRoles);
+
+    } catch (err) {
+        const errorMsg = getErrorMessage(err);
+
+        if (user.id !== product.creator.toString()) {
+            return res.status(403).json({ message: errorMsg, status: 403 });
+        }
+    }
+
+    try {
+        await productService.updateProduct(productId, productData);
+
+        res.json({ message: `Product ${productId} has been updated`, status: 200 });
+
+    } catch (err) {
+        const errorMsg = getErrorMessage(err);
+
+        if (errorMsg.includes('required') || errorMsg.includes('Cast')) {
+            return res.status(400).json({ message: errorMsg, status: 400 });
+        }
+
+        console.error(errorMsg);
+        res.status(500).json({ message: 'Internal server error', status: 500 });
+    }
+});
+
 export default productController;
