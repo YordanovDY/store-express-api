@@ -87,6 +87,7 @@ function getSingleProduct(productId) {
 
 async function addProduct(newProduct) {
     const {
+        brand,
         name,
         imageUrl,
         quantity,
@@ -104,8 +105,11 @@ async function addProduct(newProduct) {
         throw new Error(err.message)
     }
 
+    const createdAt = new Date;
+
     try {
         return await Product.create({
+            brand,
             name,
             imageUrl,
             quantity,
@@ -113,6 +117,7 @@ async function addProduct(newProduct) {
             description,
             characteristics,
             subcategory,
+            createdAt,
             creator
         });
 

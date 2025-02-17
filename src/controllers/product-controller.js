@@ -42,9 +42,10 @@ productController.get('/latest', async (req, res) => {
 });
 
 productController.post('/catalog', async (req, res) => {
+    const user = req.user;
+    const authRoles = [ROLES.StoreManager, ROLES.Admin];
+
     try {
-        const user = req.user;
-        const authRoles = [ROLES.StoreManager, ROLES.Admin];
         authService.checkForPermissions(user, authRoles);
 
     } catch (err) {
@@ -52,6 +53,7 @@ productController.post('/catalog', async (req, res) => {
     }
 
     const newProduct = req.body;
+    newProduct['creator'] = user.id;
 
     try {
         const result = await productService.addProduct(newProduct);
