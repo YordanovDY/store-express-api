@@ -1,7 +1,8 @@
-import { Router } from "express";
+import { json, Router } from "express";
 import productService from "../services/product-service.js";
 import authService from "../services/auth-service.js";
 import { ROLES } from "../config/constants.js";
+import { getErrorMessage } from "../utils/error-util.js";
 
 const productController = Router();
 
@@ -69,6 +70,26 @@ productController.post('/catalog', async (req, res) => {
         }
 
         console.error("Server error:", err.message);
+        res.status(500).json({ message: 'Internal server error', status: 500 });
+    }
+});
+
+productController.get('/catalog/:productId', async (req, res) => {
+    const { productId } = req.params;
+
+    try {
+        const result = await productService.getSingleProduct(productId);
+
+        if (!result) {
+            return res.status(404).json({ message: 'Product not found', status: 404 });
+        }
+
+        res.json(result);
+
+    } catch (err) {
+        const errorMsg = getErrorMessage(err);
+        console.error(errorMsg);
+
         res.status(500).json({ message: 'Internal server error', status: 500 });
     }
 });
