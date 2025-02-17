@@ -8,7 +8,8 @@ const productService = {
     getLatestProducts,
     getSingleProduct,
     checkForAvailabilityAndCorrect,
-    updateProduct
+    updateProduct,
+    deleteProduct
 }
 
 function getProducts(options, page = 1, search = '') {
@@ -149,7 +150,11 @@ async function updateProduct(productId, productData) {
         description,
         characteristics,
         subcategory
-    }, {runValidators: true})
+    }, { runValidators: true })
+}
+
+function deleteProduct(productId) {
+    return Product.findByIdAndDelete(productId);
 }
 
 async function checkForNameDuplications(productName) {

@@ -3,6 +3,7 @@ import productService from "../services/product-service.js";
 import authService from "../services/auth-service.js";
 import { ROLES } from "../config/constants.js";
 import { getErrorMessage } from "../utils/error-util.js";
+import { requireToken } from "../middlewares/auth-middleware.js";
 
 const productController = Router();
 
@@ -94,7 +95,7 @@ productController.get('/catalog/:productId', async (req, res) => {
     }
 });
 
-productController.put('/catalog/:productId', async (req, res) => {
+productController.put('/catalog/:productId', requireToken, async (req, res) => {
     const { productId } = req.params;
     const productData = req.body;
     const user = req.user;
@@ -131,6 +132,41 @@ productController.put('/catalog/:productId', async (req, res) => {
         }
 
         console.error(errorMsg);
+        res.status(500).json({ message: 'Internal server error', status: 500 });
+    }
+});
+
+productController.delete('/catalog/:productId', requireToken, async (req, res) => {
+    const { productId } = req.params;
+    const user = req.user;
+    const authRoles = [ROLES.Admin];
+
+    let product = null;
+    try {
+        product = await productService.getSingleProduct(productId);
+
+        if (!product) {
+            return res.status(404).json({ message: 'Product not found', status: 404 });
+        }
+
+        authService.checkForPermissions(user, authRoles);
+
+    } catch (err) {
+        const errorMsg = getErrorMessage(err);
+
+        if (user.id !== product.creator.toString()) {
+            return res.status(403).json({ message: errorMsg, status: 403 });
+        }
+    }
+
+    try {
+        await productService.deleteProduct(productId);
+        res.json({ message: `Product ${productId} has been deleted`, status: 200 });
+
+    } catch (err) {
+        const errorMsg = getErrorMessage(err);
+        console.error(errorMsg);
+
         res.status(500).json({ message: 'Internal server error', status: 500 });
     }
 });
