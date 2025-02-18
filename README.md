@@ -21,9 +21,9 @@ more.
 2. Create `.env` file or paste provided file;
 - The file must be in the root directory of the project;
 - The file must contain the following environment variables:
-* DATABASE_URi
-* JWT_SECRET
-* SESSION_SECRET
+     - `DATABASE_URI`  
+     - `JWT_SECRET`  
+     - `SESSION_SECRET`  
 3. Start the RESTful service `npm start`;
 
 ## Resources
