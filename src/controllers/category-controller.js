@@ -63,6 +63,10 @@ categoryController.post('/', requireToken, async (req, res) => {
             return res.status(400).json({ message: errorMsg, status: 400 });
         }
 
+        if (errorMsg.includes('already exists')) {
+            return res.status(409).json({ message: errorMsg, status: 409 });
+        }
+
         console.error(errorMsg);
         res.status(500).json({ message: 'Internal server error', status: 500 });
     }

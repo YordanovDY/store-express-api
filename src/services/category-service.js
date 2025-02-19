@@ -7,7 +7,13 @@ const categoryService = {
     attachSubcategory
 }
 
-function addCategory(categoryName) {
+async function addCategory(categoryName) {
+    const foundCategory = await Category.findOne({ name: categoryName });
+
+    if(foundCategory){
+        throw new Error('This category name already exists!');
+    }
+
     return Category.create({ name: categoryName });
 }
 
