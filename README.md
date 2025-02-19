@@ -27,5 +27,5 @@ more.
 3. Start the RESTful service `npm start`;
 
 ## Resources
-- API Documentation: [here](https://drive.google.com/file/d/1UjH5sc7PWEYA2Dw_IwuJXl13okQgI4s6/view?usp=sharing);
+- API Documentation: [here](https://drive.google.com/file/d/1823cndUloMaMusO3SOxf5WxBp97uaNMM/view?usp=sharing);
 - Database with dummy data and sample .env file: soon
