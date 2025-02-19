@@ -6,18 +6,13 @@ const subcategoryService = {
 };
 
 async function addSubcategory(subcategoryName) {
-    try {
-        const foundSubcategory = await Subcategory.findOne({ name: subcategoryName });
+    const foundSubcategory = await Subcategory.findOne({ name: subcategoryName });
 
-        if (foundSubcategory) {
-            throw new Error('This subcategory name already exists!');
-        }
-
-        return Subcategory.create({ name: subcategoryName });
-
-    } catch (err) {
-        console.error(getErrorMessage(err));
-        throw new Error('Something went wrong!');
+    if (foundSubcategory) {
+        throw new Error('This subcategory name already exists!');
     }
+
+    return Subcategory.create({ name: subcategoryName });
+
 }
 export default subcategoryService;
