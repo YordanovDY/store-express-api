@@ -9,7 +9,8 @@ const productService = {
     getSingleProduct,
     checkForAvailabilityAndCorrect,
     updateProduct,
-    deleteProduct
+    deleteProduct,
+    getPages
 }
 
 function getProducts(options, page = 1, search = '') {
@@ -213,6 +214,20 @@ async function checkForAvailabilityAndCorrect(cart) {
 
     return cart;
 
+}
+
+async function getPages(options) {
+    let { subcategory, limit } = options;
+
+    if (typeof limit !== 'number' || limit < 1) {
+        limit = 15;
+    }
+
+    const productsCount = await Product.countDocuments({ subcategory });
+
+    const pagesCount = Math.ceil(productsCount / limit);
+
+    return pagesCount;
 }
 
 export default productService;

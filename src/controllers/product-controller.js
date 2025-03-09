@@ -30,6 +30,23 @@ productController.get('/catalog', async (req, res) => {
     }
 });
 
+productController.get('/catalog/pages', async (req, res) => {
+    const options = req.options || {};
+
+    if (!options || !options.subcategory) {
+        return res.status(400).json({ message: 'Subcategory is required', status: 400 });
+    }
+
+    try {
+        const result = await productService.getPages(options);
+        res.json(result);
+
+    } catch (err) {
+        console.error("Server error:", err.message);
+        res.status(500).json({ message: 'Internal server error', status: 500 });
+    }
+});
+
 productController.get('/latest', async (req, res) => {
     const limit = req.options?.limit;
 
