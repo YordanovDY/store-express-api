@@ -24,12 +24,10 @@ productController.get('/catalog/:subcategoryId/products', async (req, res) => {
     }
 });
 
-productController.get('/catalog/pages', async (req, res) => {
+productController.get('/catalog/:subcategoryId/pages', async (req, res) => {
+    const { subcategoryId } = req.params;
     const options = req.options || {};
-
-    if (!options || !options.subcategory) {
-        return res.status(400).json({ message: 'Subcategory is required', status: 400 });
-    }
+    options['subcategory'] = subcategoryId;
 
     try {
         const result = await productService.getPages(options);
