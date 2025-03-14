@@ -7,18 +7,12 @@ import { requireToken } from "../middlewares/auth-middleware.js";
 
 const productController = Router();
 
-productController.get('/catalog', async (req, res) => {
+productController.get('/catalog/:subcategoryId/products', async (req, res) => {
+    const { subcategoryId } = req.params;
     let { search, page } = req.query;
 
     const options = req.options || {};
-
-    if (!search) {
-
-        if (!options || !options.subcategory) {
-            return res.status(400).json({ message: 'Subcategory is required', status: 400 });
-        }
-
-    }
+    options['subcategory'] = subcategoryId;
 
     try {
         const result = await productService.getProducts(options, page, search);
