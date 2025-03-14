@@ -20,7 +20,10 @@ export default function expressInit(app) {
         cookie: { secure: false }
     }));
 
-    app.use(cors());
+    app.use(cors({
+        origin: 'http://localhost:5100',
+        credentials: true
+    }));
 
     app.use(authMiddleware());
 
