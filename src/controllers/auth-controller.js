@@ -68,10 +68,14 @@ authController.post('/login', async (req, res) => {
     }
 });
 
-authController.get('/user', requireToken, async (req, res) => {
+authController.get('/user', async (req, res) => {
     const user = req.user;
 
-    res.status(200).json({ message: 'Valid authentication token', status: 200, result: { user } });
+    if (!user) {
+        return res.status(200).json(null);
+    }
+
+    res.status(200).json(user);
 });
 
 authController.get('/logout', requireToken, async (req, res) => {
