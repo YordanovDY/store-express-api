@@ -3,7 +3,6 @@ import Order from '../models/Order.js';
 import { getErrorMessage } from '../utils/error-util.js';
 import { restoreProductQuantity } from '../utils/quantity-utils.js';
 
-const DELIVERY_PRICE = 6;
 const validStatuses = ['Processing', 'Shipped', 'Delivered']
 
 const orderService = {
@@ -53,10 +52,6 @@ function placeAnOrder(user, cart, paymentMethod) {
     let totalPrice = 0;
     for (const productData of cart) {
         totalPrice += productData.product.price * productData.quantity;
-    }
-
-    if (totalPrice < 100) {
-        totalPrice += DELIVERY_PRICE;
     }
 
     return Order.create({
