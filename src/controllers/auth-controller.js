@@ -11,9 +11,9 @@ authController.post('/register', async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        await authService.register(email, password);
+        const user = await authService.register(email, password);
 
-        res.status(201).json({ message: 'User created', status: 201 });
+        res.status(201).json({ message: 'User created', status: 201, user: { id: user._id, email: user.email, role: user.role } });
 
     } catch (err) {
         if (err.message.includes('range')) {
