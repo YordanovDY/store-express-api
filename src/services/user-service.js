@@ -1,5 +1,7 @@
 
 import User from '../models/User.js';
+import Order from '../models/Order.js';
+
 const userService = {
     getUser,
     getCart,
@@ -8,7 +10,8 @@ const userService = {
     addCartItem,
     replaceCartItem,
     removeCartItem,
-    emptyCart
+    emptyCart,
+    getOrders
 }
 
 function getUser(user) {
@@ -64,6 +67,10 @@ async function emptyCart(user) {
         { _id: user.id },
         { cart: [] }
     );
+}
+
+async function getOrders(user) {
+    return Order.find({ recipient: user.id })
 }
 
 export default userService;

@@ -103,4 +103,18 @@ userController.delete('/cart/:productId', requireToken, async (req, res) => {
     }
 });
 
+userController.get('/orders', requireToken, async (req, res) => {
+    const user = req.user;
+    const result = await userService.getOrders(user);
+
+    try {
+        res.json(result);
+
+    } catch (err) {
+        const errorMsg = getErrorMessage(err);
+        console.error('Server error:', errorMsg);
+        res.status(500).json({ message: 'Internal server error', status: 500 });
+    }
+});
+
 export default userController;
