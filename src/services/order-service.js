@@ -28,7 +28,9 @@ function getOrders(filter = { status: 'Processing' }) {
 
 function getSingleOrder(orderId) {
     try {
-        return Order.findById(orderId).populate('recipient', {password: 0, role: 0, cart:0});
+        return Order.findById(orderId)
+            .populate('recipient', { password: 0, role: 0, cart: 0 })
+            .populate('products.product');
 
     } catch (err) {
         throw new Error(getErrorMessage(err));
@@ -48,7 +50,7 @@ function placeAnOrder(user, cart, paymentMethod) {
     } else if (estimatedDelivery.getDay() === 0) {
         estimatedDelivery = new Date(estimatedDelivery.getTime() + getDaysInMilliseconds(1));
     }
-    
+
     let totalPrice = 0;
     for (const productData of cart) {
         totalPrice += productData.product.price * productData.quantity;
